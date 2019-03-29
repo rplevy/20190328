@@ -2,11 +2,11 @@
   (:require [clojure.test :refer :all]
             [assignment.core :as base]))
 
-(deftest test-generate-sql
-  (let [fields {1 :id
-                2 :name
-                3 :date_joined
-                4 :age}]
+(deftest test-wheres
+  (let [fields {:where-fields {1 :id
+                               2 :name
+                               3 :date_joined
+                               4 :age}}]
     (is (= (base/generate-sql fields ["is_empty" ["field" 3]])
            "SELECT * FROM data WHERE date_joined IS NULL"))
     (is (= (base/generate-sql fields ["=" ["field" 3] nil])
@@ -28,3 +28,14 @@
                                        ["=" ["field" 2] "Jerry"]]])
            (str "SELECT * FROM data WHERE date_joined IS NOT NULL AND "
                 "(age > 25 OR name = 'Jerry')")))))
+
+(deftest test-macros
+  (let [fields {:where-fields {1 :id
+                               2 :name
+                               3 :date_joined
+                               4 :age}
+                :where-macros {"is_joe" ["=" ["field" 2] "joe"]}}]
+    (is (= (base/generate-sql fields ["AND"
+                                      ["<" ["field" 1] 5]
+                                      ["macro" "is_joe"]])
+           "SELECT * FROM data WHERE id < 5 AND name = 'joe'"))))
