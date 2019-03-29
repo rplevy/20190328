@@ -17,13 +17,26 @@
   )
 
 (defmethod compile "=" [fields [_ value-a value-b]]
-  )
+  (if (nil? value-b)
+    (format "%s IS NULL"
+            (field/compile fields value-a))
+    (format "%s <> %s"
+            (field/compile fields value-a)
+            (field/compile fields value-b))))
 
 (defmethod compile "!=" [fields [_ value-a value-b]]
-  )
+  (if (nil? value-b)
+    (format "%s IS NOT NULL"
+            (field/compile fields value-a))
+    (format "%s <> %s"
+            (field/compile fields value-a)
+            (field/compile fields value-b))))
 
 (defmethod compile "is_empty" [fields [_ value]]
   (format "%s IS NULL" (field/compile fields value)))
 
 (defmethod compile "not_empty" [fields [_ value]]
   (format "%s IS NOT NULL" (field/compile fields value)))
+
+(defmethod compile :default [fields value]
+  (throw (Exception. "unknown operator. expected: operator for WHERE clause.")))
