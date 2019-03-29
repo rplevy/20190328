@@ -10,5 +10,5 @@
      [\"!=\" [\"field\" 2] 0]
   "
   [fields query]
-  (let [base-sql "SELECT * FROM data WHERE "]
-    (str base-sql (where/compile fields query))))
+  (format "SELECT * FROM data WHERE %s"
+          (where/compile fields query)))

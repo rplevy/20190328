@@ -7,6 +7,8 @@
                 2 :name
                 3 :date_joined
                 4 :age}]
+    (is (= (base/generate-sql fields ["is_empty" ["field" 3]])
+           "SELECT * FROM data WHERE date_joined IS NULL"))
     (is (= (base/generate-sql fields ["=" ["field" 3] nil])
            "SELECT * FROM data WHERE date_joined IS NULL"))
     (is (= (base/generate-sql fields [">" ["field" 4] 35])

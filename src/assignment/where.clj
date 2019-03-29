@@ -1,4 +1,5 @@
-(ns assignment.where)
+(ns assignment.where
+  (:require [assignment.field :as field]))
 
 (defmulti compile (fn [fields [operator & args]]
                     operator))
@@ -22,7 +23,7 @@
   )
 
 (defmethod compile "is_empty" [fields [_ value]]
-  )
+  (format "%s IS NULL" (field/compile fields value)))
 
 (defmethod compile "not_empty" [fields [_ value]]
-  )
+  (format "%s IS NOT NULL" (field/compile fields value)))
