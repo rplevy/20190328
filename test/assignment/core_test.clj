@@ -64,3 +64,30 @@
                                  ["<" ["field" 1] 5]
                                  ["macro" "is_joe"]]]])
            "SELECT * FROM things WHERE id < 5 AND name = 'joe'"))))
+
+(deftest test-select
+  (let [query-spec {:fields {1 :id
+                             2 :name
+                             3 :date_joined
+                             4 :age}
+                    :macros {"is_joe" ["=" ["field" 2] "joe"]}
+                    :tables {1 :stuff
+                             2 :things}}]
+    (is (= (base/generate-sql query-spec
+                              ["query"
+                               ["select" ["field" 1]]
+                               ["from" 1]
+                               ["where"
+                                ["AND"
+                                 ["<" ["field" 1] 5]
+                                 ["macro" "is_joe"]]]])
+           "SELECT id FROM stuff WHERE id < 5 AND name = 'joe'"))
+      (is (= (base/generate-sql query-spec
+                                ["query"
+                                 ["select" ["field" 1] ["field" 2]]
+                                 ["from" 2]
+                                 ["where"
+                                  ["AND"
+                                   ["<" ["field" 1] 5]
+                                   ["macro" "is_joe"]]]])
+             "SELECT id, name FROM things WHERE id < 5 AND name = 'joe'"))))
