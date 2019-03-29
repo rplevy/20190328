@@ -11,10 +11,14 @@
   )
 
 (defmethod compile ">" [fields [_ value-a value-b]]
-  )
+  (format "%s > %s"
+          (field/compile fields value-a)
+          (field/compile fields value-b)))
 
 (defmethod compile "<" [fields [_ value-a value-b]]
-  )
+  (format "%s < %s"
+          (field/compile fields value-a)
+          (field/compile fields value-b)))
 
 (defmethod compile "=" [fields [_ value-a value-b]]
   (if (nil? value-b)
