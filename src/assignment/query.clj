@@ -3,10 +3,10 @@
             [assignment.from :as from]
             [assignment.where :as where]))
 
-(defmulti compile (fn [tables where-fields where-macros [operator & args]]
+(defmulti transpile (fn [tables fields macros [operator & args]]
                     operator))
 
-(defmethod compile "query" [from-tables where-fields where-macros
+(defmethod transpile "query" [tables fields macros
                             [_ [from from-id] [where where-clause]]]
   (cond (or (not= from "from") (not from-id))
         (throw (Exception. "expected: from clause"))
@@ -15,9 +15,9 @@
         (throw (Exception. "expected: where clause"))
 
         :else (format "SELECT * FROM %s WHERE %s"
-                      (from/compile from-tables from-id)
-                      (where/compile where-fields where-macros where-clause))))
+                      (from/transpile tables from-id)
+                      (where/transpile fields macros where-clause))))
 
-(defmethod compile :default [tables where-fields where-macros where-clause]
+(defmethod transpile :default [tables fields macros where-clause]
   (format "SELECT * FROM data WHERE %s"
-          (where/compile where-fields where-macros where-clause)))
+          (where/transpile fields macros where-clause)))
