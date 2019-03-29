@@ -5,10 +5,16 @@
 (defmulti compile (fn [fields [operator & args]]
                     operator))
 
+(defn nested? [[operator & _]]
+  (#{"AND" "OR"} operator))
+
 (defn join-clauses [fields clauses sep]
   (str/join
    sep
-   (map (fn [clause] (compile fields clause))
+   (map (fn [clause]
+          (if (nested? clause)
+            (format "(%s)" (compile fields clause))
+            (compile fields clause)))
         clauses)))
 
 (defmethod compile "AND" [fields [_ & clauses]]
