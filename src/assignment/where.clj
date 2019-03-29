@@ -1,14 +1,21 @@
 (ns assignment.where
-  (:require [assignment.field :as field]))
+  (:require [clojure.string :as str]
+            [assignment.field :as field]))
 
 (defmulti compile (fn [fields [operator & args]]
                     operator))
 
+(defn join-clauses [fields clauses sep]
+  (str/join
+   sep
+   (map (fn [clause] (compile fields clause))
+        clauses)))
+
 (defmethod compile "AND" [fields [_ & clauses]]
-  )
+  (join-clauses fields clauses " AND "))
 
 (defmethod compile "OR" [fields [_ & clauses]]
-  )
+  (join-clauses fields clauses " OR "))
 
 (defmethod compile ">" [fields [_ value-a value-b]]
   (format "%s > %s"
@@ -24,7 +31,7 @@
   (if (nil? value-b)
     (format "%s IS NULL"
             (field/compile fields value-a))
-    (format "%s <> %s"
+    (format "%s = %s"
             (field/compile fields value-a)
             (field/compile fields value-b))))
 

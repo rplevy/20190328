@@ -14,17 +14,17 @@
     (is (= (base/generate-sql fields [">" ["field" 4] 35])
            "SELECT * FROM data WHERE age > 35"))
     (is (= (base/generate-sql fields ["AND"
-                                 ["<" ["field" 1]  5]
-                                 ["=" ["field" 2] "joe"]])
-           "SELECT * FROM data WHERE id < 5 AND name='joe'"))
+                                      ["<" ["field" 1]  5]
+                                      ["=" ["field" 2] "joe"]])
+           "SELECT * FROM data WHERE id < 5 AND name = 'joe'"))
     (is (= (base/generate-sql fields ["OR"
-                                 ["!=" ["field" 3] "2015-11-01"]
-                                 ["=" ["field" 1] 456]])
-           "SELECT * FROM data WHERE date_joined <> '2015-11-01' or id = 456"))
+                                      ["!=" ["field" 3] "2015-11-01"]
+                                      ["=" ["field" 1] 456]])
+           "SELECT * FROM data WHERE date_joined <> '2015-11-01' OR id = 456"))
     (is (= (base/generate-sql fields ["AND"
-                                 ["!=" ["field" 3] nil]
-                                 ["OR"
-                                  [">" ["field" 4] 25]
-                                  ["=" ["field" 2] "Jerry"]]])
+                                      ["!=" ["field" 3] nil]
+                                      ["OR"
+                                       [">" ["field" 4] 25]
+                                       ["=" ["field" 2] "Jerry"]]])
            (str "SELECT * FROM data WHERE date_joined IS NOT NULL AND "
                 "(age > 25 OR name = 'Jerry')")))))
